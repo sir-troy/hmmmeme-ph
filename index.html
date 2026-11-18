@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hmmmMeme PH · random Pinoy memes</title>
+<meta name="description" content="hmmmMeme PH — random Pinoy memes, isang click lang.">
+<meta property="og:title" content="hmmmMeme PH">
+<meta property="og:description" content="Random Pinoy memes, isang click lang.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --panel: #141416;
+    --line: #2a2a2e;
+    --ink: #f2f2ee;
+    --muted: #8a8a90;
+    --accent: #ffd23f;   /* signal yellow */
+    --hot: #ff5a1f;      /* hazard orange */
+    --pink: #ff4fa3;     /* logo only */
+    --cyan: #3de0ff;     /* logo only */
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    overflow-x: hidden;
+  }
+
+  /* ---------- background: moving grid + vignette + scanlines ---------- */
+  .grid {
+    position: fixed; inset: -60px; z-index: -3;
+    background-image:
+      linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridMove 8s linear infinite;
+  }
+  @keyframes gridMove { to { transform: translate(60px, 60px); } }
+  .vignette { position: fixed; inset: 0; z-index: -2; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 45% at 50% 30%, rgba(255,210,63,.10), transparent 70%),
+      radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,.85) 100%); }
+  .scan { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .25;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.35) 0 1px, transparent 1px 3px); }
+
+  .floaty { position: fixed; bottom: -60px; pointer-events: none; z-index: 0; animation: rise linear forwards; }
+  @keyframes rise { to { transform: translateY(-115vh) rotate(var(--r, 360deg)); opacity: 0; } }
+
+  /* ---------- header ---------- */
+  header { width: 100%; max-width: 860px; padding: 28px 20px 6px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+  .logo-face { font-size: 34px; display: inline-block; animation: ponder 3.2s ease-in-out infinite; transform-origin: 50% 80%; }
+  @keyframes ponder { 0%,100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg) translateY(-2px); } }
+  .wordmark { font-family: 'Bungee', cursive; font-size: clamp(26px, 5vw, 38px); letter-spacing: .5px; line-height: 1; }
+  .wordmark .m { display: inline-block; color: var(--accent); animation: hum 1.6s ease-in-out infinite; }
+  .wordmark .m:nth-child(2) { animation-delay: .15s; color: var(--pink); }
+  .wordmark .m:nth-child(3) { animation-delay: .3s; color: var(--cyan); }
+  .wordmark .meme { background: linear-gradient(90deg, var(--ink), #b99bff, var(--pink), var(--ink)); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 6s linear infinite; }
+  @keyframes hum { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  @keyframes shimmer { to { background-position: 300% 0; } }
+
+  .ph { font-family: 'Bungee', cursive; font-size: clamp(13px, 2.2vw, 16px); color: #fff; padding: 5px 9px 4px; margin-left: 2px; align-self: flex-start;
+    background: linear-gradient(180deg, #0038a8 0 50%, #ce1126 50% 100%); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--accent);
+    display: inline-flex; align-items: center; gap: 5px; transform: rotate(-6deg); animation: wiggle 4s ease-in-out infinite; }
+  .ph .sun { font-style: normal; color: var(--accent); display: inline-block; animation: sunspin 6s linear infinite; }
+  @keyframes sunspin { to { transform: rotate(360deg); } }
+  @keyframes wiggle { 0%,90%,100% { transform: rotate(-6deg); } 93% { transform: rotate(4deg) scale(1.1); } 96% { transform: rotate(-10deg); } }
+  .counter { font-family: 'JetBrains Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--muted); background: var(--panel); border: 2px solid var(--line); padding: 8px 12px; white-space: nowrap; }
+  .counter b { color: var(--accent); font-variant-numeric: tabular-nums; display: inline-block; min-width: 2ch; text-align: right; }
+  .counter b.bump { animation: bump .35s ease; }
+  @keyframes bump { 50% { transform: scale(1.6); color: var(--hot); } }
+
+  .tagline { font-family: 'JetBrains Mono', monospace; color: var(--muted); font-size: 13px; padding: 4px 20px 26px; text-align: center; min-height: 1.4em; }
+  .tagline::before { content: "> "; color: var(--accent); }
+  .tagline .cursor { display: inline-block; width: 8px; height: 1em; background: var(--accent); vertical-align: -2px; margin-left: 3px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ---------- meme card ---------- */
+  main { width: 100%; max-width: 860px; padding: 0 20px; flex: 1; display: flex; flex-direction: column; align-items: center; }
+  .card {
+    position: relative; width: 100%;
+    background: var(--panel);
+    border: 3px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--accent);
+    padding: 0;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .card:hover { transform: translate(-3px, -3px); box-shadow: 13px 13px 0 var(--accent); }
+  .card:active { transform: translate(4px, 4px); box-shadow: 4px 4px 0 var(--accent); }
+
+  /* corner tag */
+  .tag { position: absolute; top: -14px; left: 18px; background: var(--hot); color: #111; font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 10px; border: 2px solid var(--ink); z-index: 2; }
+
+  .card.out { animation: slamOut .25s ease-in forwards; }
+  .card.in  { animation: slamIn .5s cubic-bezier(.2,1.6,.4,1) forwards; }
+  @keyframes slamOut { to { transform: translateY(30px) scale(.96); opacity: 0; } }
+  @keyframes slamIn {
+    0%   { transform: translateY(-40px) scale(1.06); opacity: 0; }
+    60%  { transform: translateY(4px) scale(.99); opacity: 1; }
+    75%  { transform: translateX(-4px); }
+    88%  { transform: translateX(3px); }
+    100% { transform: none; opacity: 1; }
+  }
+
+  .meme-title {
+    font-family: 'Bungee', cursive; font-weight: 400;
+    font-size: clamp(18px, 3.2vw, 26px); line-height: 1.25;
+    text-align: center; text-transform: uppercase;
+    padding: 26px 24px 18px;
+    border-bottom: 3px solid var(--ink);
+    min-height: 1.25em;
+    word-break: break-word;
+  }
+  .frame { position: relative; overflow: hidden; background: #000; min-height: 320px; display: grid; place-items: center; }
+  .frame img { display: block; max-width: 100%; max-height: 68vh; margin: 0 auto; }
+  .meta { font-family: 'JetBrains Mono', monospace; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    padding: 12px 16px; font-size: 12px; color: var(--muted); flex-wrap: wrap; border-top: 3px solid var(--ink); }
+  .meta a { color: var(--accent); text-decoration: none; font-weight: 700; }
+  .meta a:hover { text-decoration: underline; }
+  .meta .ups { color: var(--hot); font-weight: 700; }
+
+  /* loader */
+  .loader { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 70px 20px; }
+  .loader .think { font-size: 54px; animation: ponder 1s ease-in-out infinite; }
+  .loader .bar { width: 180px; height: 10px; border: 2px solid var(--ink); position: relative; overflow: hidden; }
+  .loader .bar::after { content: ""; position: absolute; inset: 0; width: 40%; background: var(--accent); animation: load 1s ease-in-out infinite; }
+  @keyframes load { 0% { left: -40%; } 100% { left: 100%; } }
+  .loader .txt { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  /* ---------- controls ---------- */
+  .controls { display: flex; gap: 16px; margin: 34px 0 12px; flex-wrap: wrap; justify-content: center; }
+  .btn {
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
+    cursor: pointer; padding: 14px 20px;
+    color: var(--ink); background: var(--panel); border: 3px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink);
+    transition: transform .1s ease, box-shadow .1s ease;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--ink); }
+  .btn:active { transform: translate(5px, 5px); box-shadow: 0 0 0 var(--ink); }
+  .btn.primary {
+    font-family: 'Bungee', cursive; font-weight: 400; font-size: 19px; letter-spacing: .5px;
+    color: #111; background: var(--accent); padding: 16px 30px;
+  }
+  .btn.primary .dice { display: inline-block; transition: transform .4s ease; }
+  .btn.primary:hover .dice { transform: rotate(200deg); }
+  .hint { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); margin-bottom: 40px; text-align: center; }
+  kbd { font-family: inherit; color: var(--ink); background: var(--panel); border: 2px solid var(--line); border-bottom-width: 4px; padding: 1px 7px; font-size: 11px; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 140px); background: var(--accent); color: #111; border: 3px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink); font-family: 'JetBrains Mono', monospace; font-weight: 700; padding: 12px 18px; transition: transform .3s cubic-bezier(.2,1.5,.4,1); z-index: 10; }
+  .toast.show { transform: translate(-50%, 0); }
+
+  /* ---------- footer ---------- */
+  footer { width: 100%; text-align: center; padding: 22px 20px 26px; font-size: 13px; color: var(--muted); border-top: 2px solid var(--line); background: rgba(0,0,0,.5); }
+  footer .brand { font-family: 'Bungee', cursive; color: var(--ink); }
+  footer small { font-family: 'JetBrains Mono', monospace; display: block; margin-top: 6px; opacity: .7; font-size: 11px; }
+
+  @media (max-width: 520px) {
+    .card { box-shadow: 6px 6px 0 var(--accent); }
+    .btn.primary { width: 100%; justify-content: center; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+<link rel="stylesheet" href="useful-indeed/footer.css">
+<script src="version-log.js"></script>
+<link rel="canonical" href="https://hmmmeme-ph.useful-indeed.com/">
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="apple-touch-icon" href="logo.svg">
+<style id="useful-indeed-mobile">.logo .ui-applogo{width:40px;height:40px;border-radius:10px;display:inline-block;font-size:0}/* mobile fixes */html,body{overflow-x:clip}.wordmark{white-space:nowrap}@media (max-width:420px){header{padding:22px 14px 6px;flex-wrap:wrap}.counter{font-size:10.5px;padding:6px 8px;letter-spacing:.5px}.logo-face{font-size:28px}}</style>
+</head>
+<body>
+  <div class="grid"></div><div class="vignette"></div><div class="scan"></div>
+
+  <header>
+    <a class="logo" href="#" onclick="return false">
+      <img class="logo-face ui-applogo" src="logo.svg" alt="" width="40" height="40">
+      <span class="wordmark">h<span class="m">m</span><span class="m">m</span><span class="m">m</span><span class="meme">Meme</span></span>
+      <span class="ph"><i class="sun">☀</i>PH</span>
+    </a>
+    <div class="counter">memes nakita: <b id="count">0</b></div>
+  </header>
+  <p class="tagline"><span id="tagline"></span><span class="cursor"></span></p>
+
+  <main>
+    <div class="card" id="card" title="I-click para sa isa pa">
+      <div class="tag" id="tag">#000</div>
+      <div class="meme-title" id="memeTitle"></div>
+      <div class="frame" id="frame"></div>
+      <div class="meta" id="meta"></div>
+    </div>
+
+    <div class="controls">
+      <button class="btn primary" id="nextBtn"><span class="dice">🎲</span> Isa pa!</button>
+      <button class="btn" id="shareBtn">🔗 Kopyahin link</button>
+    </div>
+    <p class="hint">I-click ang meme o pindutin ang <kbd>Space</kbd> / <kbd>→</kbd> para sa susunod</p>
+  </main>
+
+  <footer>
+    <span hidden style="display:none!important">© <span id="year"></span> hmmmMeme PH.</span>Gawang Pinoy 🇵🇭
+    <small>Memes are pulled at random from Pinoy Reddit communities and belong to their original creators.</small>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const card = $('card'), frame = $('frame'), titleEl = $('memeTitle'), meta = $('meta'), tagEl = $('tag');
+  const countEl = $('count');
+  $('year').textContent = new Date().getFullYear();
+
+  // typewriter tagline
+  const taglines = [
+    "walang katapusang memes. walang effort.",
+    "pang-break mo 'to habang hinihintay ang sahod.",
+    "isa pa? sige na nga.",
+    "nandyan na si boss. alt+tab, pare.",
+    "bawal tumawa nang malakas, nasa opisina ka.",
+    "proven: nakakalimot sa deadline.",
+  ];
+  (function type() {
+    const line = taglines[Math.floor(Math.random() * taglines.length)];
+    let i = 0; const el = $('tagline');
+    const t = setInterval(() => { el.textContent = line.slice(0, ++i); if (i >= line.length) clearInterval(t); }, 35);
+  })();
+
+  // fallback captions for posts whose title is just the sub name (me_irl, meirl, etc.)
+  const JUNK_TITLE = /^\s*(me[\s_]*irl|meirl|me_irl|memes?|dank ?memes?|title|\.|-)\s*$/i;
+  const FALLBACK = ["Ako 'to, pare", "Totoo naman", "Sapul", "Relate much", "Sakit sa bangs", "Grabe, same", "Walang caption, gets mo na"];
+
+  // Pinoy meme communities on Reddit. Any that don't exist / are private get skipped automatically.
+  let SUBS = ['phmemes', 'PinoyMemes', 'FilipinoMemes', 'MemesPH', 'PinoyMemesPH', 'pinoy'];
+  const BACKUP_SUB = 'Philippines'; // used only if none of the meme subs respond
+  let current = null, queue = [], loading = false, seen = 0;
+  const seenUrls = new Set();
+
+  async function fetchFrom(sub) {
+    const r = await fetch(`https://meme-api.com/gimme/${sub}/15`);
+    if (!r.ok) throw new Error(sub + ' ' + r.status);
+    const d = await r.json();
+    if (!d.memes || !d.memes.length) throw new Error(sub + ' empty');
+    return d;
+  }
+
+  async function fetchBatch() {
+    let d = null;
+    const order = [...SUBS].sort(() => Math.random() - .5);
+    for (const sub of order) {
+      try { d = await fetchFrom(sub); break; }
+      catch { SUBS = SUBS.filter(s => s !== sub); } // drop dead subs for this session
+    }
+    if (!d) d = await fetchFrom(BACKUP_SUB);
+    return (d.memes || [])
+      .filter(m => !m.nsfw && !m.spoiler && /\.(jpe?g|png|gif|webp)$/i.test(m.url) && !seenUrls.has(m.url))
+      .map(m => ({ url: m.url, title: m.title, source: 'r/' + m.subreddit, link: m.postLink, ups: m.ups, author: m.author }));
+  }
+
+  async function fetchImgflip() {
+    const r = await fetch('https://api.imgflip.com/get_memes');
+    const d = await r.json();
+    return d.data.memes.sort(() => Math.random() - .5).slice(0, 10)
+      .map(m => ({ url: m.url, title: m.name, source: 'Imgflip template', link: 'https://imgflip.com/memegenerator/' + m.id }));
+  }
+
+  async function refill() {
+    try { queue.push(...(await fetchBatch()).sort(() => Math.random() - .5)); }
+    catch { try { queue.push(...await fetchImgflip()); } catch {} }
+    queue.slice(0, 3).forEach(m => { const i = new Image(); i.src = m.url; });
+  }
+
+  function showLoader(msg = 'teka lang, naghahanap…') {
+    frame.innerHTML = `<div class="loader"><div class="think">🤔</div><div class="bar"></div><div class="txt">${msg}</div></div>`;
+    titleEl.textContent = 'hmmm…'; meta.innerHTML = '';
+  }
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const fmt = n => n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : n;
+  const niceTitle = t => (!t || JUNK_TITLE.test(t)) ? FALLBACK[Math.floor(Math.random() * FALLBACK.length)] : t;
+
+  async function next() {
+    if (loading) return;
+    loading = true;
+    burst();
+
+    card.classList.remove('in'); card.classList.add('out');
+    await new Promise(r => setTimeout(r, 230));
+
+    if (queue.length < 1) { showLoader(); card.classList.remove('out'); card.classList.add('in'); await refill(); }
+    const m = queue.shift();
+    if (queue.length < 4) refill();
+
+    if (!m) {
+      frame.innerHTML = `<div class="loader"><div class="think">💀</div><div class="txt">walang dumating na meme. i-click ulit.</div></div>`;
+      titleEl.textContent = 'Ay, nawala ang signal';
+      card.classList.remove('out'); card.classList.add('in');
+      loading = false; return;
+    }
+
+    const img = new Image();
+    img.alt = m.title;
+    img.onload = () => {
+      seenUrls.add(m.url); current = m;
+      frame.innerHTML = ''; frame.appendChild(img);
+      titleEl.textContent = niceTitle(m.title);
+      meta.innerHTML = `<span>${esc(m.source)}${m.author ? ' · u/' + esc(m.author) : ''}</span>
+        <span>${m.ups ? `<span class="ups">▲ ${fmt(m.ups)}</span> · ` : ''}<a href="${esc(m.link)}" target="_blank" rel="noopener">view original ↗</a></span>`;
+      seen++; countEl.textContent = seen;
+      tagEl.textContent = '#' + String(seen).padStart(3, '0');
+      countEl.classList.remove('bump'); void countEl.offsetWidth; countEl.classList.add('bump');
+      card.classList.remove('out'); void card.offsetWidth; card.classList.add('in');
+      loading = false;
+    };
+    img.onerror = () => { loading = false; card.classList.remove('out'); next(); };
+    img.src = m.url;
+  }
+
+  const EMO = ['😂','💀','🔥','🗿','🤣','👀','🇵🇭','🍺','🐓'];
+  function burst() {
+    for (let i = 0; i < 5; i++) {
+      const e = document.createElement('div');
+      e.className = 'floaty';
+      e.textContent = EMO[Math.floor(Math.random() * EMO.length)];
+      e.style.left = Math.random() * 100 + 'vw';
+      e.style.fontSize = 20 + Math.random() * 22 + 'px';
+      e.style.setProperty('--r', (Math.random() * 720 - 360) + 'deg');
+      e.style.animationDuration = 2.5 + Math.random() * 2.5 + 's';
+      document.body.appendChild(e);
+      setTimeout(() => e.remove(), 5500);
+    }
+  }
+
+  function toast(msg) {
+    const t = $('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  $('shareBtn').addEventListener('click', async e => {
+    e.stopPropagation();
+    if (!current) return;
+    try { await navigator.clipboard.writeText(current.link); toast('Nakopya na! 📋'); }
+    catch { toast('Copy failed: ' + current.link); }
+  });
+  $('nextBtn').addEventListener('click', e => { e.stopPropagation(); next(); });
+  card.addEventListener('click', e => { if (!e.target.closest('a')) next(); });
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' || e.code === 'ArrowRight') { e.preventDefault(); next(); }
+  });
+
+  showLoader();
+  next();
+</script>
+<footer class="ui-foot">
+  <div class="ui-foot-in">
+    <a class="ui-foot-brand" href="https://useful-indeed.com" title="More small, free tools on useful-indeed"><img src="useful-indeed/logo.svg" alt="useful-indeed logo" width="22" height="22"><span>© <span data-ui-year>2026</span> <b>useful-indeed</b></span></a>
+    <nav class="ui-foot-nav" aria-label="Site"><a href="about.html">About</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="contact.html">Contact</a></nav>
+    <button type="button" class="ui-foot-ver" data-ui-ver>v1.0 · Version log</button>
+  </div>
+</footer>
+<script src="useful-indeed/badge.js" defer></script>
+</body>
+</html>
